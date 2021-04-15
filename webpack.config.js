@@ -3,6 +3,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const sharp = require('sharp');
 
 module.exports = {
     entry: './src/styles.css',
@@ -12,15 +14,14 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: process.env.NODE_ENV === 'development'
-                        }
-                    },
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     'postcss-loader'
                 ]
+            },
+            {
+                test: /\.(jpe?g|png|gif|svg)$/i,
+                type: 'javascript/auto'
             }
         ]
     },
@@ -31,9 +32,22 @@ module.exports = {
             template: 'src/index.html',
             gaId: process.env.GA_ID
         }),
-        new CopyPlugin([
-            { from: 'src/images', to: 'images' }
-        ])
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: 'src/images',
+                    to: 'images',
+                    transform: content => sharp(content).resize(160).toBuffer()
+                }
+            ]
+        }),
+        new ImageMinimizerPlugin({
+            severityError: 'warning',
+            minimizerOptions: {
+                plugins: ['mozjpeg']
+            },
+            loader: false
+        })
     ],
     optimization: {
         minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})]
