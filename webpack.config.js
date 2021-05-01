@@ -13,39 +13,39 @@ module.exports = {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"]
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
-        type: "javascript/auto",
-      },
-    ],
+        type: "javascript/auto"
+      }
+    ]
   },
   plugins: [
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
       filename: "index.html",
       template: "src/index.html",
-      gaId: process.env.GA_ID,
+      gaId: process.env.GA_ID
     }),
     new CopyPlugin({
       patterns: [
         {
           from: "src/images",
           to: "images",
-          transform: (content) => sharp(content).resize(160).toBuffer(),
-        },
-      ],
+          transform: content => sharp(content).resize(160).toBuffer()
+        }
+      ]
     }),
     new ImageMinimizerPlugin({
       severityError: "warning",
       minimizerOptions: {
-        plugins: ["mozjpeg"],
+        plugins: ["mozjpeg"]
       },
-      loader: false,
-    }),
+      loader: false
+    })
   ],
   optimization: {
-    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
-  },
+    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})]
+  }
 };
