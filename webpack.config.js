@@ -1,4 +1,3 @@
-const TerserJSPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
@@ -6,14 +5,21 @@ const CopyPlugin = require("copy-webpack-plugin");
 const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
 const sharp = require("sharp");
 
+const mode = process.env.NODE_ENV;
+const isProd = mode === "production";
+
 module.exports = {
   entry: "./src/index.css",
-  mode: process.env.NODE_ENV,
+  mode,
   module: {
     rules: [
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader", "postcss-loader"]
+        use: [
+          isProd ? MiniCssExtractPlugin.loader : "style-loader",
+          "css-loader",
+          "postcss-loader"
+        ]
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,
@@ -22,7 +28,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: isProd ? "[name].[contenthash].css" : "[name].css"
+    }),
     new HtmlWebpackPlugin({
       filename: "index.html",
       template: "src/index.html",
@@ -46,6 +54,6 @@ module.exports = {
     })
   ],
   optimization: {
-    minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})]
+    minimizer: [new OptimizeCSSAssetsPlugin({})]
   }
 };
