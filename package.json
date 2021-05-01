@@ -13,15 +13,16 @@
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "postcss": "^8.2.10",
     "postcss-loader": "^5.2.0",
+    "prettier": "^2.2.1",
     "sharp": "^0.28.1",
-    "tailwindcss": "^2.1.1",
+    "tailwindcss": "^2.1.2",
     "terser-webpack-plugin": "^5.1.1",
     "webpack": "^5.33.2",
     "webpack-cli": "^4.6.0",
     "webpack-dev-server": "^3.11.2"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development webpack serve"
+    "build": "webpack --mode=production",
+    "dev": "webpack serve --mode=development"
   }
 }
